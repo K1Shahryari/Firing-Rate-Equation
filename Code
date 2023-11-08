@@ -1,0 +1,49 @@
+u = []
+w = []
+
+for i in range(5):
+    while True:
+        u_i = float(input("Enter the subthreshold synaptic input (u) for neuron {} (in pA): ".format(i+1)))
+        if u_i >= 0:
+            break
+        else:
+            print("Invalid input! Subthreshold synaptic input must be non-negative.")
+    u.append(u_i)
+    while True:
+        w_i = float(input("Enter the neuron weight (w) for neuron {} (must be between 0 and 1): ".format(i+1)))
+        if 0 <= w_i <= 1:
+            break
+        else:
+            print("Invalid input! Weight must be between 0 and 1.")
+    w.append(w_i)
+
+# Here we calculate the feedforward network current using the formula i = ∑(u * w)
+i = sum([u[i] * w[i] for i in range(5)])
+
+# Define the firing rate function
+# please note that here, values of changes of F (I) based on I
+# are defined relatively and according to the firing rate diagram in your publication.
+def firing_rate(i):
+    if i < 40:
+        return 0
+    elif 40 <= i < 45:
+        return 20 * (i - 40) / 5
+    elif 45 <= i <= 120:
+        return 20 + 10 * (i - 45) / 75
+    else:
+        return 30
+
+# Calculate the F (I)
+f_rate = firing_rate(i)
+
+# Print the results with units pA and Hz, because we want to depict them on the curve
+print("The input current (I) is: {:.2f} pA".format(i))
+print("The firing rate F(I) is: {:.2f} Hz".format(f_rate))
+
+# We will check if the input current is greater than or equal to 40 pA and print a message in green if it is
+if i >= 40:
+    print("\033[32mPostsynaptic firing rate detected.\033[0m")
+
+# Check if the input current is less than 40 pA and print a message in red if it is
+if i < 40:
+    print("\033[31mNo postsynaptic firing rate detected.\033[0m")
